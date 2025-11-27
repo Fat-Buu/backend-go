@@ -1,0 +1,14 @@
+go mod init github.com/backend-go
+
+go get github.com/gofiber/fiber/v2
+go get github.com/joho/godotenv
+
+go get github.com/swaggo/fiber-swagger@latest
+go get github.com/swaggo/files@latest
+swag init
+
+http://localhost:3000/swagger/index.html
+
+go get github.com/google/uuid
+
+go run .
