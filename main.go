@@ -5,7 +5,7 @@ import (
 	"os"
 
 	_ "github.com/backend-go/docs"
-	"github.com/backend-go/user"
+	"github.com/backend-go/internal/user"
 	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
 

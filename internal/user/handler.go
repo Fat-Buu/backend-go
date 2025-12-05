@@ -60,8 +60,20 @@ func (h *UserHandler) GetUserById(c *fiber.Ctx) error {
 // @Failure 400 {object} map[string]string
 // @Router /user [post]
 func (h *UserHandler) CreateUser(c *fiber.Ctx) error {
+	var req UserRequest
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "invalid request data",
+		})
+	}
+	createUser, err := h.service.CreateUser(req)
+	if !err {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "failed to create user",
+		})
+	}
 	return c.JSON(fiber.Map{
-		"data": users,
+		"data": createUser,
 	})
 }
 
@@ -77,8 +89,26 @@ func (h *UserHandler) CreateUser(c *fiber.Ctx) error {
 // @Failure 404 {object} map[string]string
 // @Router /user/{id} [put]
 func (h *UserHandler) UpdateUser(c *fiber.Ctx) error {
+	id, err := uuid.Parse(c.Params("id"))
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid UUID",
+		})
+	}
+	var req UserRequest
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "invalid request data",
+		})
+	}
+	updateUser, ok := h.service.UpdateUser(id, req)
+	if !ok {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "failed to update user",
+		})
+	}
 	return c.JSON(fiber.Map{
-		"data": users,
+		"data": updateUser,
 	})
 }
 
@@ -92,7 +122,16 @@ func (h *UserHandler) UpdateUser(c *fiber.Ctx) error {
 // @Failure 404 {object} map[string]string
 // @Router /user/{id} [delete]
 func (h *UserHandler) DeleteUser(c *fiber.Ctx) error {
-	return c.JSON(fiber.Map{
-		"data": users,
-	})
+	id, err := uuid.Parse(c.Params("id"))
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid UUID",
+		})
+	}
+	if result := h.service.DeleteUser(id); !result {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"error": "user not found",
+		})
+	}
+	return c.SendStatus(fiber.StatusNoContent)
 }
