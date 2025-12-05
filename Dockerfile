@@ -14,7 +14,7 @@ RUN go mod download
 COPY . .
 
 # Build binary
-RUN go build -o main .
+RUN go build -o backend-go ./cmd/main.go
 
 # Stage 2: Run
 FROM alpine:latest
@@ -23,10 +23,11 @@ FROM alpine:latest
 RUN apk --no-cache add ca-certificates
 
 # Set workdir
-WORKDIR /root/
+WORKDIR /app
 
 # Copy binary from builder
-COPY --from=builder /app/main .
+COPY --from=builder /app/backend-go ./backend-go
+
 # ต้อง copy .env เข้า container
 COPY .env .env               
 
@@ -34,4 +35,4 @@ COPY .env .env
 EXPOSE 3000
 
 # Run binary
-CMD ["./main"]
+CMD ["./backend-go"]

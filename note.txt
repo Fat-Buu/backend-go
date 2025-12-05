@@ -11,7 +11,7 @@ http://localhost:3000/swagger/index.html
 
 go get github.com/google/uuid
 
-go run .
+go run ./cmd/main.go
 
 Dokcer
 docker build -t backend-go:latest .
