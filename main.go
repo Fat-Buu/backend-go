@@ -14,30 +14,35 @@ import (
 
 // @title Fiber User API
 // @version 1.0
-// @description This is a sample Fiber API.
+// @description Fiber CRUD API example
 // @host localhost:3000
 // @BasePath /backend-go/v1
 func main() {
 	if err := godotenv.Load(); err != nil {
-		log.Fatal("Error load env")
+		log.Fatal("Error loading .env file")
+	}
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "3000"
 	}
 
 	app := fiber.New(fiber.Config{
 		AppName: "Backend-Go",
 	})
-	port := os.Getenv("PORT")
 
 	// Swagger route
 	app.Get("/swagger/*", fiberSwagger.WrapHandler)
+	service := user.NewUserService()
+	handler := user.NewUserHandler(service)
 	api := app.Group("/backend-go/v1")
-
 	userGroup := api.Group("/user")
 
-	userGroup.Get("", user.GetAllUser)
-	userGroup.Get("/:id", user.GetUserById)
-	userGroup.Post("", user.CreateUser)
-	userGroup.Put("/:id", user.UpdateUser)
-	userGroup.Delete("/:id", user.DeleteUser)
+	userGroup.Get("", handler.GetAllUser)
+	userGroup.Get("/:id", handler.GetUserById)
+	userGroup.Post("", handler.CreateUser)
+	userGroup.Put("/:id", handler.UpdateUser)
+	userGroup.Delete("/:id", handler.DeleteUser)
 
 	log.Fatal(app.Listen(":" + port))
 }
