@@ -14,5 +14,5 @@ go get github.com/google/uuid
 go run ./cmd/main.go
 
 Dokcer
-docker build -t backend-go:latest .
-docker run -p 3000:3000 backend-go:latest
+docker build -t backend-go:1.0.0 .
+docker run -p 3000:3000 backend-go:1.0.0
