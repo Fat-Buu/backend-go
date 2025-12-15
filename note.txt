@@ -14,5 +14,7 @@ go get github.com/google/uuid
 go run ./cmd/main.go
 
 Dokcer
+swag init -g cmd/main.go
 docker build -t backend-go:1.0.0 .
 docker run -p 3000:3000 backend-go:1.0.0
+docker image ls backend-go
