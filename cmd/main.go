@@ -21,14 +21,20 @@ func main() {
 	user.LoadUsers()
 
 	port := getPort()
-	app := setupFiberApp()
+	app := SetupFiberApp()
 
+	log.Fatal(app.Listen(":" + port))
+}
+
+func SetupFiberApp() *fiber.App {
+	app := fiber.New(fiber.Config{
+		AppName: "Backend-Go",
+	})
 	// Swagger route
 	app.Get("/swagger/*", fiberSwagger.WrapHandler)
 
 	user.RegisterRoutes(app)
-
-	log.Fatal(app.Listen(":" + port))
+	return app
 }
 
 func loadEnv() {
@@ -43,10 +49,4 @@ func getPort() string {
 		port = "3000"
 	}
 	return port
-}
-
-func setupFiberApp() *fiber.App {
-	return fiber.New(fiber.Config{
-		AppName: "Backend-Go",
-	})
 }
