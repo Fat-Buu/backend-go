@@ -128,7 +128,7 @@ func (h *UserHandler) DeleteUser(c *fiber.Ctx) error {
 			"error": "Invalid UUID",
 		})
 	}
-	if result := h.service.DeleteUser(id); !result {
+	if err := h.service.DeleteUser(id); err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"error": "user not found",
 		})

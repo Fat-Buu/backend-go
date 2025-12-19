@@ -20,8 +20,8 @@ func (s *UserService) getAllUser() []UserResponse {
 }
 
 func (s *UserService) GetUserByID(id uuid.UUID) (UserResponse, bool) {
-	user, found := s.userRepository.GetByID(id)
-	if !found {
+	user, err := s.userRepository.GetByID(id)
+	if err != nil {
 		return UserResponse{}, false
 	}
 	return ToUserResponse(user), true
@@ -30,7 +30,7 @@ func (s *UserService) GetUserByID(id uuid.UUID) (UserResponse, bool) {
 func (s *UserService) CreateUser(u UserRequest) (UserResponse, bool) {
 	var newUser = User{Id: uuid.New(), Username: u.Username}
 	user, err := s.userRepository.Add(newUser)
-	if !err {
+	if err != nil {
 		return UserResponse{}, false
 	}
 	return ToUserResponse(user), true
@@ -39,12 +39,12 @@ func (s *UserService) CreateUser(u UserRequest) (UserResponse, bool) {
 func (s *UserService) UpdateUser(id uuid.UUID, u UserRequest) (UserResponse, bool) {
 	var updateUser = User{Id: id, Username: u.Username}
 	user, err := s.userRepository.UpdateUser(updateUser)
-	if !err {
+	if err != nil {
 		return UserResponse{}, false
 	}
 	return ToUserResponse(user), true
 }
 
-func (s *UserService) DeleteUser(id uuid.UUID) bool {
+func (s *UserService) DeleteUser(id uuid.UUID) error {
 	return s.userRepository.Delete(id)
 }

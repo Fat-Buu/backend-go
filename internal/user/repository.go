@@ -1,6 +1,7 @@
 package user
 
 import (
+	"errors"
 	"sync"
 
 	"github.com/google/uuid"
@@ -8,10 +9,10 @@ import (
 
 type UserRepository interface {
 	GetAll() []User
-	GetByID(id uuid.UUID) (User, bool)
-	Add(user User) (User, bool)
-	UpdateUser(user User) (User, bool)
-	Delete(id uuid.UUID) bool
+	GetByID(id uuid.UUID) (User, error)
+	Add(user User) (User, error)
+	UpdateUser(user User) (User, error)
+	Delete(id uuid.UUID) error
 }
 
 type UserRepositoryImpl struct {
@@ -20,39 +21,44 @@ type UserRepositoryImpl struct {
 }
 
 func (u *UserRepositoryImpl) GetAll() []User {
-	return u.users
+	copied := make([]User, len(u.users))
+	copy(copied, u.users)
+	return copied
 }
 
-func (u *UserRepositoryImpl) GetByID(id uuid.UUID) (User, bool) {
+func (u *UserRepositoryImpl) GetByID(id uuid.UUID) (User, error) {
 	for _, u := range u.users {
 		if u.Id == id {
-			return u, true
+			return u, nil
 		}
 	}
-	return User{}, false
+	return User{}, errors.New("User " + id.String() + " not found")
 }
 
-func (u *UserRepositoryImpl) Add(user User) (User, bool) {
+func (u *UserRepositoryImpl) Add(user User) (User, error) {
+	if user.Id == uuid.Nil {
+		user.Id = uuid.New()
+	}
 	u.users = append(u.users, user)
-	return user, true
+	return user, nil
 }
 
-func (u *UserRepositoryImpl) UpdateUser(user User) (User, bool) {
+func (u *UserRepositoryImpl) UpdateUser(user User) (User, error) {
 	for i, _user := range u.users {
 		if _user.Id == user.Id {
-			u.users[i].Username = user.Username
-			return u.users[i], true
+			u.users[i] = user
+			return u.users[i], nil
 		}
 	}
-	return User{}, false
+	return User{}, errors.New("User " + user.Id.String() + " not found")
 }
 
-func (u *UserRepositoryImpl) Delete(id uuid.UUID) bool {
+func (u *UserRepositoryImpl) Delete(id uuid.UUID) error {
 	for i, _user := range u.users {
 		if _user.Id == id {
 			u.users = append(u.users[:i], u.users[i+1:]...)
-			return true
+			return nil
 		}
 	}
-	return false
+	return errors.New("user " + id.String() + " not found")
 }
