@@ -7,6 +7,10 @@ type UserRequest struct {
 }
 
 type UserResponse struct {
-	Id       uuid.UUID `json:"id"`
-	Username string    `json:"username"`
+	Id           uuid.UUID `json:"id"`
+	Username     string    `json:"username"`
+	Password     string    `json:"password"`
+	FirstName    string    `json:"firstName"`
+	LastName     string    `json:"lastName"`
+	ProfielImage string    `json:"profileImage"`
 }

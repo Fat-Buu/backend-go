@@ -18,6 +18,7 @@ import (
 // @BasePath /backend-go/v1
 func main() {
 	loadEnv()
+	user.LoadUsers()
 
 	port := getPort()
 	app := setupFiberApp()

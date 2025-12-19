@@ -1,11 +1,32 @@
 package user
 
-import "github.com/google/uuid"
+import (
+	"encoding/json"
+	"log"
+	"os"
+	"sync"
 
-// Data layer / mock DB
-var users = []User{
-	{Id: uuid.New(), Username: "John Go"},
-	{Id: uuid.New(), Username: "Jane Fiber"},
+	"github.com/google/uuid"
+)
+
+var (
+	users []User
+	once  sync.Once
+)
+
+func LoadUsers() {
+	once.Do(func() {
+		file, err := os.ReadFile("resources/users.json")
+		if err != nil {
+			log.Fatal("cannot read users.json:", err)
+		}
+
+		if err := json.Unmarshal(file, &users); err != nil {
+			log.Fatal("cannot unmarshal users.json:", err)
+		}
+
+		log.Printf("users loaded: %d records\n", len(users))
+	})
 }
 
 // Get all users
