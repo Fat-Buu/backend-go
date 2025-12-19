@@ -20,7 +20,7 @@ func NewUserHandler(service *UserService) *UserHandler {
 // @Success 200 {array} UserResponse
 // @Router /user [get]
 func (h *UserHandler) GetAllUser(c *fiber.Ctx) error {
-	users := h.service.getAllUser()
+	users := h.service.GetAllUser()
 	return c.JSON(fiber.Map{
 		"data": users,
 	})
@@ -42,8 +42,8 @@ func (h *UserHandler) GetUserById(c *fiber.Ctx) error {
 			"error": "Invalid UUID",
 		})
 	}
-	user, found := h.service.GetUserByID(id)
-	if !found {
+	user, err := h.service.GetUserByID(id)
+	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "User not found"})
 	}
 
@@ -67,7 +67,7 @@ func (h *UserHandler) CreateUser(c *fiber.Ctx) error {
 		})
 	}
 	createUser, err := h.service.CreateUser(req)
-	if !err {
+	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "failed to create user",
 		})
@@ -101,8 +101,8 @@ func (h *UserHandler) UpdateUser(c *fiber.Ctx) error {
 			"error": "invalid request data",
 		})
 	}
-	updateUser, ok := h.service.UpdateUser(id, req)
-	if !ok {
+	updateUser, err := h.service.UpdateUser(id, req)
+	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "failed to update user",
 		})

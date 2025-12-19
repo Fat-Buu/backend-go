@@ -6,15 +6,15 @@ import (
 	"github.com/google/uuid"
 )
 
-func setupRepo() *UserRepositoryImpl {
-	return &UserRepositoryImpl{
+func setupRepo() *UserRepository {
+	return &UserRepository{
 		users: []User{
 			{Id: uuid.New(), Username: "john.go", Password: "password", FirstName: "John", LastName: "Go"},
 			{Id: uuid.New(), Username: "jane.go", Password: "123456", FirstName: "Jane", LastName: "Go"},
 		},
 	}
 }
-func TestGetAllUser(t *testing.T) {
+func TestGetAll(t *testing.T) {
 	repo := setupRepo()
 	users := repo.GetAll()
 
@@ -35,14 +35,14 @@ func TestGetByID(t *testing.T) {
 	}
 }
 
-func TestAddUser(t *testing.T) {
+func TestAdd(t *testing.T) {
 	repo := setupRepo()
 	user := User{Id: uuid.New(), Username: "Test.create", Password: "123456", FirstName: "Test", LastName: "Go"}
-	userCreated, err := repo.Add(user)
+	actual, err := repo.Add(user)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	if userCreated.Id == uuid.Nil {
+	if actual.Id == uuid.Nil {
 		t.Errorf("expected user ID to be assigned, got nil")
 	}
 
@@ -51,8 +51,8 @@ func TestAddUser(t *testing.T) {
 		t.Errorf("expected 3 users after adding, got %d", len(users))
 	}
 
-	if userCreated.Username != user.Username {
-		t.Errorf("expected username %v, got %v", user.Username, userCreated.Username)
+	if user.Username != actual.Username {
+		t.Errorf("expected username %v, got %v", user.Username, actual.Username)
 	}
 }
 
@@ -61,15 +61,15 @@ func TestUpdate(t *testing.T) {
 	users := repo.GetAll()
 	user := users[0]
 	user.Username = "New.name"
-	userUpdated, err := repo.UpdateUser(user)
+	actual, err := repo.Update(user)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	if userUpdated.Id != user.Id {
-		t.Errorf("expected user ID %v, got %v", user.Id, userUpdated.Id)
+	if actual.Id != user.Id {
+		t.Errorf("expected user ID %v, got %v", user.Id, actual.Id)
 	}
-	if userUpdated.Username != user.Username {
-		t.Errorf("expected username %v, got %v", user.Username, userUpdated.Username)
+	if user.Username != actual.Username {
+		t.Errorf("expected username %v, got %v", user.Username, actual.Username)
 	}
 }
 

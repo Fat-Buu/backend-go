@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-func NewUserRepositoryFromFile(path string) (*UserRepositoryImpl, error) {
+func NewUserRepositoryFromFile(path string) (*UserRepository, error) {
 	var users []User
 	file, err := os.ReadFile(path)
 	if err != nil {
@@ -19,7 +19,7 @@ func NewUserRepositoryFromFile(path string) (*UserRepositoryImpl, error) {
 	}
 
 	log.Printf("users loaded: %d records\n", len(users))
-	return &UserRepositoryImpl{
+	return &UserRepository{
 		users: users,
 	}, nil
 }
