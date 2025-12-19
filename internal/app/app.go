@@ -11,7 +11,6 @@ import (
 )
 
 func SetupFiberApp() *fiber.App {
-	user.LoadUsers()
 	app := fiber.New(fiber.Config{
 		AppName: "Backend-Go",
 	})

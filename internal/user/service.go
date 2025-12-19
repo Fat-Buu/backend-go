@@ -7,18 +7,20 @@ import (
 // Business logic
 
 // UserService contains business logic
-type UserService struct{}
+type UserService struct {
+	userRepository UserRepository
+}
 
-func NewUserService() *UserService {
-	return &UserService{}
+func NewUserService(userRepository UserRepository) *UserService {
+	return &UserService{userRepository: userRepository}
 }
 
 func (s *UserService) getAllUser() []UserResponse {
-	return ToUserResponseList(GetAll())
+	return ToUserResponseList(s.userRepository.GetAll())
 }
 
 func (s *UserService) GetUserByID(id uuid.UUID) (UserResponse, bool) {
-	user, found := GetByID(id)
+	user, found := s.userRepository.GetByID(id)
 	if !found {
 		return UserResponse{}, false
 	}
@@ -27,7 +29,7 @@ func (s *UserService) GetUserByID(id uuid.UUID) (UserResponse, bool) {
 
 func (s *UserService) CreateUser(u UserRequest) (UserResponse, bool) {
 	var newUser = User{Id: uuid.New(), Username: u.Username}
-	user, err := Add(newUser)
+	user, err := s.userRepository.Add(newUser)
 	if !err {
 		return UserResponse{}, false
 	}
@@ -36,7 +38,7 @@ func (s *UserService) CreateUser(u UserRequest) (UserResponse, bool) {
 
 func (s *UserService) UpdateUser(id uuid.UUID, u UserRequest) (UserResponse, bool) {
 	var updateUser = User{Id: id, Username: u.Username}
-	user, err := UpdateUser(updateUser)
+	user, err := s.userRepository.UpdateUser(updateUser)
 	if !err {
 		return UserResponse{}, false
 	}
@@ -44,5 +46,5 @@ func (s *UserService) UpdateUser(id uuid.UUID, u UserRequest) (UserResponse, boo
 }
 
 func (s *UserService) DeleteUser(id uuid.UUID) bool {
-	return Delete(id)
+	return s.userRepository.Delete(id)
 }
