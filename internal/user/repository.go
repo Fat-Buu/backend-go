@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"log"
 	"os"
+	"path/filepath"
+	"strings"
 	"sync"
 
 	"github.com/google/uuid"
@@ -16,7 +18,18 @@ var (
 
 func LoadUsers() {
 	once.Do(func() {
-		file, err := os.ReadFile("resources/users.json")
+		wd, _ := os.Getwd()
+		var l []string = strings.Split(wd, "\\")
+		log.Println("Working dir: ", wd)
+		var filePath string
+		if l[len(l)-1] == "test" {
+			filePath = filepath.Join(wd, "..", "resources", "users.json")
+		} else {
+			filePath = filepath.Join(wd, "resources", "users.json")
+
+		}
+		log.Println("filePath: ", filePath)
+		file, err := os.ReadFile(filePath)
 		if err != nil {
 			log.Fatal("cannot read users.json:", err)
 		}
