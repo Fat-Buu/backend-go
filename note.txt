@@ -1,5 +1,6 @@
 go mod init github.com/backend-go
-
+go mod download
+go mod tidy
 go get github.com/gofiber/fiber/v2
 go get github.com/joho/godotenv
 
