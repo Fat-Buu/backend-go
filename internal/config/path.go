@@ -16,7 +16,6 @@ func UsersFilePath() string {
 		filePath = filepath.Join(wd, "..", "resources", "users.json")
 	} else {
 		filePath = filepath.Join(wd, "resources", "users.json")
-
 	}
 	log.Println("filePath: ", filePath)
 

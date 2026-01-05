@@ -19,5 +19,8 @@ go run ./cmd/main.go
 Dokcer
 swag init -g cmd/main.go
 docker build -t backend-go:1.0.0 .
-docker run -p 3000:3000 backend-go:1.0.0
 docker image ls backend-go
+docker run -d -p 3000:3000 --name backend_go_container backend-go:1.0.0
+docker container ls -f name=backend_go_container
+docker container rm -f backend_go_container
+docker rmi -f backend-go:1.0.0
