@@ -31,6 +31,10 @@ COPY --from=builder /app/backend-go ./backend-go
 # ต้อง copy .env เข้า container
 COPY .env .env               
 
+ENV RESOURCES_USER_JSON=./sharepool/backend-go/resources/users.json
+
+VOLUME /sharepool
+
 # Expose port (Fiber default)
 EXPOSE 3000
 
